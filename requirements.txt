@@ -5,3 +5,4 @@ chromadb
 pydantic
 python-dotenv
 pytest
+streamlit
