@@ -5,7 +5,7 @@ st.set_page_config(page_title="Business Intelligence Agent", page_icon="🤖")
 
 st.title("Business Intelligence Agent")
 st.caption(
-    "Ask a math question or a question about John Keells Holdings' Annual Report — "
+    "Ask a math question or a question about John Keells Holdings' Annual Report. "
     "the agent decides which tool to use."
 )
 
