@@ -1,4 +1,7 @@
 .env
 __pycache__/
-.pytest_cache/.DS_Store
+.pytest_cache/
+.DS_Store
 *.pdf
+.hf/
+.backup*/

@@ -1,0 +1,72 @@
+# Agent evaluation set.
+#   tools        the tool set the agent should use (order ignored); [] = answer directly
+#   must_include every item must appear in the answer; any_of = at least one
+#   must_not     must NOT appear (e.g. a general-knowledge answer it should decline)
+#   computed     the answer is calculated, so --check cannot find it verbatim in the report
+# Figures for report questions were copied from the report; --check verifies them.
+
+- id: calc_divide
+  question: What is 128 divided by 4?
+  tools: [calculate]
+  must_include: ["32"]
+  computed: true
+
+- id: calc_percent
+  question: What is 15% of 2,400?
+  tools: [calculate]
+  must_include: ["360"]
+  computed: true
+
+- id: calc_abuse
+  question: Calculate 9**9**9
+  tools: [calculate]
+  any_of: ["too large", "too big", "limit", "cannot", "can't", "unable"]
+  computed: true
+
+- id: search_ebitda
+  question: How much did Group EBITDA grow in 2025/26?
+  tools: [search_knowledge_base]
+  must_include: ["75%", "80.01"]
+
+- id: search_risks
+  question: What are the key risks facing the Group?
+  tools: [search_knowledge_base]
+  must_include: ["cybersecurity"]
+
+- id: search_rooms
+  question: How many hotel rooms does the Group manage in Sri Lanka and the Maldives?
+  tools: [search_knowledge_base]
+  any_of: ["3,468", "3,577"]
+
+- id: search_dividend
+  question: What final dividend per share did the Board declare?
+  tools: [search_knowledge_base]
+  any_of: ["0.10", "10 cents"]
+
+- id: chain_retail_share
+  question: What share of the Group's recurring EBITDA came from the Retail industry group?
+  tools: [search_knowledge_base, calculate]
+  any_of: ["40.7", "40.66", "40.67", "41%"]
+  computed: true
+
+- id: chain_ebitda_increase
+  question: By how much in rupees did Group EBITDA increase from 2024/25 to 2025/26?
+  tools: [search_knowledge_base, calculate]
+  any_of: ["34.16", "34.2", "34,16"]
+  computed: true
+
+- id: chain_retail_vs_leisure
+  question: How many times larger was Retail's recurring EBITDA than Leisure's?
+  tools: [search_knowledge_base, calculate]
+  any_of: ["2.54", "2.5 times", "2.5x"]
+  computed: true
+
+- id: oos_capital
+  question: What is the capital of France?
+  tools: []
+  must_not: ["Paris"]
+
+- id: oos_cricket
+  question: Who won the 2023 Cricket World Cup?
+  tools: []
+  must_not: ["Australia"]

@@ -1,31 +1,19 @@
-# Business Intelligence Agent: Capstone Architecture
+# Design notes
 
-## Problem
-Business users need to ask natural-language questions that sometimes require
-calculation, sometimes require searching company documents, and sometimes
-neither, without knowing in advance which is needed.
+## Why an agent, not a fixed pipeline
 
-## Architecture: Agent-First
-The agent (Week 3) is the entry point. It decides, per question, whether to:
-- Call `calculate` (safe AST-based evaluator)
-- Call `search_knowledge_base` (Week 2's RAG retrieval, wired in as a tool)
-- Answer directly (no tool needed)
+Some questions need a search, some a calculation, some both in sequence ("what share of EBITDA came from Retail?" needs two figures, then a division), and some neither. A fixed pipeline would either always search (slow, wasteful for "128 / 4") or need hand-written routing rules. Tool calling lets the model choose, while the code keeps control of execution.
 
-RAG is not a separate system the agent occasionally defers to. It is one of
-the agent's tools, exactly like the calculator. This was true since Day 17;
-Week 4 formalizes it with production infrastructure (API, tests, deployment).
+## Where control stays in code
 
-## Tech stack
-Python, Google Gemini (generation + embeddings), ChromaDB, Pydantic, FastAPI,
-Docker, GitHub Actions.
+- **Execution:** the SDK's automatic function calling is disabled; every tool call is validated with Pydantic and run by `execute_tool`, which never raises.
+- **Limits:** 6 turns, 4 calls per turn, 90 s per question, calculator bounds.
+- **Grounding:** the system prompt requires a search for any company fact and the calculator for any arithmetic.
+- **Failover:** quota and outage handling is outside the model's view; a failed model is replaced and the run restarts, which is safe because tools are read-only.
 
-## Success metrics (real, from Day 21 testing)
-5/5 test questions correctly routed and answered, including one deliberately
-ambiguous case ("how many risks does the report mention?") and one deliberate
-failure case (unsupported math operation), both handled gracefully.
+## What I would add next
 
-## Known limitation, honestly documented
-The agent behaves conservatively on general-knowledge questions outside its
-two tools (e.g. "what's the capital of France?"). It declines rather than
-answering from its own training knowledge. This is arguably a safer default
-for a business tool, but differs from general-purpose assistant behavior.
+- Parent passages for retrieval, as in the RAG project.
+- A check that every number in the answer appears in a tool result.
+- Tracing (Langfuse or LangSmith) for production debugging.
+- LangGraph once the flow needs branches like "grade passages, rewrite query, retry".

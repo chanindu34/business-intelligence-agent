@@ -1,8 +1,13 @@
+# CPU-only PyTorch on Linux hosts (Streamlit Cloud, Docker, CI); the default wheel pulls ~2 GB of CUDA.
+--extra-index-url https://download.pytorch.org/whl/cpu
+streamlit==1.64.0
+google-genai==2.24.0
+chromadb==1.5.9
+rank-bm25==0.2.1
+sentence-transformers==3.0.1
+numpy
 fastapi
 uvicorn
-google-genai
-chromadb
-pydantic
+pydantic>=2
 python-dotenv
-pytest
-streamlit
+PyYAML
