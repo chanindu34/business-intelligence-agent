@@ -55,6 +55,15 @@ Rules:
 
 TOOLS = types.Tool(function_declarations=TOOL_SCHEMAS)
 
+# "31,740 / 78,048 x 100 = 40.67%" style working: a number, an operator, a number, then "= number".
+_ARITHMETIC = re.compile(r"\d[\d,]*(?:\.\d+)?\s*(?:/|x|×|\*|÷|\+|-)\s*\d[\d,]*(?:\.\d+)?[^=\n]{0,40}=\s*-?[\d,]*\.?\d")
+CALCULATOR_NUDGE = ("Your answer shows a calculation, but you did not call the calculate tool. "
+                    "Call calculate with that expression now, then give the final answer using its result.")
+
+
+def _shows_unchecked_arithmetic(text: str) -> bool:
+    return bool(_ARITHMETIC.search(text or ""))
+
 
 class ModelUnavailable(Exception):
     """This model cannot serve the request (quota, missing, overloaded)."""
@@ -129,6 +138,7 @@ def _run_with_model(client, model, question, history, index, embed, on_step, dea
     )
     contents = _history_contents(history) + [types.Content(role="user", parts=[types.Part(text=question)])]
     steps: List[Dict[str, Any]] = []
+    nudged = False
 
     for turn in range(1, MAX_TURNS + 1):
         if time.monotonic() > deadline:
@@ -146,6 +156,16 @@ def _run_with_model(client, model, question, history, index, embed, on_step, dea
         text = "".join(p.text for p in parts if getattr(p, "text", None) and not getattr(p, "thought", False)).strip()
 
         if not calls:
+            used_calculator = any(st["tool"] == "calculate" for st in steps)
+            if (not nudged and not used_calculator and turn < MAX_TURNS
+                    and _shows_unchecked_arithmetic(text)):
+                # The answer shows a sum the calculator never ran. Send it back once.
+                nudged = True
+                contents.append(content)
+                contents.append(types.Content(role="user", parts=[types.Part(text=CALCULATOR_NUDGE)]))
+                if on_step:
+                    on_step({"event": "verifier", "detail": "arithmetic without calculator; asked model to use it"})
+                continue
             return AgentResult(text or "The model returned an empty answer.", steps, model, turn)
 
         # Send back the model's whole message (keeps any thought signatures newer

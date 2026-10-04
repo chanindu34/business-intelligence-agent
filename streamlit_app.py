@@ -97,6 +97,8 @@ def ask(question: str) -> None:
                     status.write(describe(ev))
                 elif ev["event"] == "model_failover":
                     status.write(f"Model unavailable, switching: {ev['detail']}")
+                elif ev["event"] == "verifier":
+                    status.write("Check: the answer had a sum the calculator did not run, sending it back")
 
             result = run_agent(question, client, index=index, history=history, embed=embed, on_step=on_step)
             n = len(result.steps)

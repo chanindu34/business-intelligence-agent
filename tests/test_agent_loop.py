@@ -193,3 +193,23 @@ def test_all_models_benched_still_tries_them():
     agent._benched.update({"m1": agent.time.monotonic() + 999, "m2": agent.time.monotonic() + 999})
     result, client = run([reply(text("ok"))])
     assert result.answer == "ok" and client.requests[0]["model"] == "m1"
+
+
+def test_mental_arithmetic_is_sent_back_to_use_the_calculator():
+    result, client = run([
+        reply(text("Retail share: 31,740 / 78,048 x 100 = 40.67%")),
+        reply(call("calculate", expression="31740/78048*100")),
+        reply(text("Retail share: 31,740 / 78,048 x 100 = 40.67%")),
+    ])
+    assert result.tools_used == ["calculate"] and result.turns == 3
+    assert "did not call the calculate tool" in client.requests[1]["contents"][-1].parts[0].text
+
+
+def test_verifier_nudges_only_once():
+    result, _ = run([reply(text("2 + 2 = 4")), reply(text("2 + 2 = 4"))])
+    assert result.answer == "2 + 2 = 4" and result.turns == 2
+
+
+def test_answer_after_calculator_is_not_sent_back():
+    result, client = run([reply(call("calculate", expression="2+2")), reply(text("2 + 2 = 4"))])
+    assert result.turns == 2 and len(client.requests) == 2
