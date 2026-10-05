@@ -2,10 +2,11 @@
 
 import json
 import os
-import re
 import time
 
 import streamlit as st
+
+from display import escape_md, plain_answer
 
 st.set_page_config(page_title="BI Agent", layout="centered", initial_sidebar_state="collapsed")
 
@@ -26,16 +27,6 @@ SAMPLES = [
     "By how much in rupees did Group EBITDA increase from 2024/25 to 2025/26?",
     "What is 15% of 2,400?",
 ]
-
-
-def escape_md(text: str) -> str:
-    """Show user text literally: '9**9**9' must not render as bold '999'."""
-    return re.sub(r"([\\`*_{}\[\]<>()#+\-.!|~$])", r"\\\1", text)
-
-
-def plain_answer(text: str) -> str:
-    """Stop '$...$' in model output rendering as LaTeX maths."""
-    return text.replace("$", r"\$")
 
 
 @st.cache_resource

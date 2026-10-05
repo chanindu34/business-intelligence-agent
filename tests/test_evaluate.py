@@ -21,3 +21,4 @@ def test_questions_with_no_model_are_not_scored(tmp_path, monkeypatch):
     text = evaluate.report([ok, skipped]).read_text()
     assert "1 questions scored; 1 not run" in text and "100% (1/1)" in text
     assert "Models that answered: m1 (1)" in text
+

@@ -38,7 +38,7 @@ question (+ last 3 exchanges)
 3. **Retries could block for almost 4 minutes.** Every error, including ones retrying cannot fix, was retried 5 times with waits of 15 to 75 s. Failures now fall through to the next model in under a second.
 4. **Nothing stopped answers from memory.** With no system prompt, the model could state company figures without searching. The grounding rules above now require a search for any company fact.
 5. **The reranker was silently off** in an unreleased change: the model id `cross-encoder/mmarco-MiniLMv2-L12-H384-v1` does not exist (the real one is `mmarco-mMiniLMv2`), and the load error was swallowed. The reranker is now a model that exists, and a failure is logged and visible in the tool result.
-6. **The tests had drifted from the code** (the calculator's return type changed, the tests did not). They are now 60 tests using a scripted fake Gemini client, so CI needs no API key.
+6. **The tests had drifted from the code** (the calculator's return type changed, the tests did not). They are now 65 tests using a scripted fake Gemini client, so CI needs no API key.
 7. **The prompt alone did not stop mental arithmetic.** On the live app, the model once showed `31,740 / 78,048 x 100 = 40.67%` without calling the calculator. A check in code now spots shown working that the calculator never ran and sends the answer back once with an instruction to use the tool. Another time it computed `9**9**9` itself after the calculator refused, so the tool's error message now says not to.
 
 ## Evaluation
@@ -59,7 +59,7 @@ pip install -r requirements-dev.txt
 pytest -q tests
 ```
 
-60 tests in under a second, no API key: the calculator (including `9**9**9`, code injection, complex results), hybrid search and RRF, and the agent loop against a scripted Gemini (direct answers, tool chains, parallel calls, text before a call, the step limit, unknown tools, bad arguments, failover mid-run, model cooldowns, the calculator verifier, empty replies) plus the API.
+65 tests in under a second, no API key: the calculator (including `9**9**9`, code injection, complex results), hybrid search and RRF, and the agent loop against a scripted Gemini (direct answers, tool chains, parallel calls, text before a call, the step limit, unknown tools, bad arguments, failover mid-run, model cooldowns, the calculator verifier, empty replies), the evaluator's scoring, display escaping, plus the API.
 
 ## Run it
 
@@ -87,6 +87,7 @@ docker run -p 8000:8000 --env-file .env bi-agent
 | `service.py` | Lazily built client, index and embedder (nothing loads at import) |
 | `app.py` | FastAPI service |
 | `streamlit_app.py` | Chat UI with live tool calls |
+| `display.py` | Keeps maths in questions and answers literal (`9**9**9`, `$`) when rendered as markdown |
 | `evaluate.py`, `eval/questions.yaml` | Agent evaluation |
 | `tests/` | Unit tests |
 | `data/chunk_pages.json` | Chunk to PDF page map |
