@@ -1,5 +1,6 @@
 # Agent evaluation set.
 #   tools        the tool set the agent should use (order ignored); [] = answer directly
+#   also_ok_tools other acceptable tool sets
 #   must_include every item must appear in the answer; any_of = at least one
 #   must_not     must NOT appear (e.g. a general-knowledge answer it should decline)
 #   computed     the answer is calculated, so --check cannot find it verbatim in the report
@@ -26,7 +27,9 @@
 - id: search_ebitda
   question: How much did Group EBITDA grow in 2025/26?
   tools: [search_knowledge_base]
-  must_include: ["75%", "80.01"]
+  also_ok_tools: [[search_knowledge_base, calculate]]   # computing growth from the two figures is fine
+  must_include: ["80.01"]
+  any_of: ["75%", "74.5"]
 
 - id: search_risks
   question: What are the key risks facing the Group?

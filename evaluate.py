@@ -5,7 +5,7 @@ Evaluate the agent on eval/questions.yaml.
     python3 evaluate.py             # full run, roughly 2 to 4 API calls per question
 
 Metrics
-  tool selection   the agent used exactly the expected set of tools
+  tool selection   the agent used exactly the expected set of tools (or a listed alternative)
   answer correct   expected values present, forbidden ones absent
   over-searching   searched when no tool was needed
   turns, latency   median and 95th percentile
@@ -24,6 +24,7 @@ import yaml
 ROOT = Path(__file__).parent
 QUESTIONS = ROOT / "eval" / "questions.yaml"
 RESULTS = ROOT / "eval" / "results"
+RETRY_WAIT_SECONDS = 40
 
 
 def normalise(text: str) -> str:
@@ -48,6 +49,11 @@ def answer_ok(answer: str, q: dict):
         problems.append("one of " + " / ".join(q["any_of"]))
     problems += [f"should not say {m}" for m in q.get("must_not", []) if contains(answer, m)]
     return not problems, problems
+
+
+def tools_match(used, q: dict) -> bool:
+    allowed = [q["tools"]] + q.get("also_ok_tools", [])
+    return any(sorted(set(used)) == sorted(set(a)) for a in allowed)
 
 
 def load():
@@ -91,7 +97,17 @@ def run(qs):
     rows = []
     for i, q in enumerate(qs, 1):
         r = run_agent(q["question"], client, index=index, embed=embed)
-        tools_ok = sorted(set(r.tools_used)) == sorted(set(q["tools"]))
+        if r.stopped == "no_model":
+            # Usually a per-minute limit: wait it out once rather than score a non-answer.
+            print(f"   [{i:>2}/{len(qs)}] {q['id']}: no model available, waiting {RETRY_WAIT_SECONDS}s and retrying once")
+            time.sleep(RETRY_WAIT_SECONDS)
+            r = run_agent(q["question"], client, index=index, embed=embed)
+        if r.stopped == "no_model":
+            rows.append({"id": q["id"], "question": q["question"], "expected_tools": q["tools"],
+                         "not_run": True, "answer": r.answer, "model": None, "stopped": r.stopped})
+            print(f"-- [{i:>2}/{len(qs)}] {q['id']:<24} NOT RUN: no model available (quota)")
+            continue
+        tools_ok = tools_match(r.tools_used, q)
         ok, problems = answer_ok(r.answer, q)
         rows.append({"id": q["id"], "question": q["question"], "expected_tools": q["tools"],
                      "tools_used": r.tools_used, "tools_ok": tools_ok, "answer_ok": ok, "problems": problems,
@@ -102,17 +118,30 @@ def run(qs):
     return rows
 
 
-def report(rows):
+def report(all_rows):
+    stamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    (RESULTS / f"{stamp}.json").write_text(json.dumps(all_rows, indent=2), encoding="utf-8")
+    rows = [r for r in all_rows if not r.get("not_run")]
+    skipped = [r["id"] for r in all_rows if r.get("not_run")]
     n = len(rows)
+    if not n:
+        path = RESULTS / f"{stamp}.md"
+        path.write_text(f"# Agent evaluation {stamp}\n\nNo question could run: every model was out of quota.\n",
+                        encoding="utf-8")
+        return path
+    models = {}
+    for r in rows:
+        models[r["model"]] = models.get(r["model"], 0) + 1
     tool_acc = sum(r["tools_ok"] for r in rows) / n
     ans_acc = sum(r["answer_ok"] for r in rows) / n
     no_tool = [r for r in rows if not r["expected_tools"]]
     over = sum(1 for r in no_tool if "search_knowledge_base" in r["tools_used"])
     secs = [r["seconds"] for r in rows]
-    stamp = datetime.now().strftime("%Y-%m-%d_%H%M")
-    RESULTS.mkdir(parents=True, exist_ok=True)
-    (RESULTS / f"{stamp}.json").write_text(json.dumps(rows, indent=2), encoding="utf-8")
-    lines = [f"# Agent evaluation {stamp}", "", f"{n} questions", "",
+    scored = f"{n} questions scored" + (f"; {len(skipped)} not run (no model available): {', '.join(skipped)}"
+                                        if skipped else "")
+    lines = [f"# Agent evaluation {stamp}", "", scored, "",
+             "Models that answered: " + ", ".join(f"{m} ({c})" for m, c in sorted(models.items())), "",
              "| Metric | Result |", "|---|---|",
              f"| Tool selection accuracy | {tool_acc:.0%} ({sum(r['tools_ok'] for r in rows)}/{n}) |",
              f"| Answer accuracy | {ans_acc:.0%} ({sum(r['answer_ok'] for r in rows)}/{n}) |",

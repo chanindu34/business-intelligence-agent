@@ -5,3 +5,6 @@ __pycache__/
 *.pdf
 .hf/
 .backup*/
+
+# Local evaluation console logs
+eval_*_results.txt
