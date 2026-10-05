@@ -39,7 +39,9 @@ def normalise(text: str) -> str:
 def contains(text: str, needle: str) -> bool:
     t, n = normalise(text), normalise(needle)
     if re.search(r"\d", n):
-        return re.search(rf"(?<![\d.]){re.escape(n)}(?![\d])", t) is not None
+        # "74.5" also matches "74.50": trailing zeros after a decimal do not change the value.
+        zeros = "0*" if re.fullmatch(r"\d+\.\d+", n) else ""
+        return re.search(rf"(?<![\d.]){re.escape(n)}{zeros}(?![\d])", t) is not None
     return n in t
 
 
