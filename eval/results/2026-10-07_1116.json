@@ -1,0 +1,56 @@
+[
+  {
+    "id": "search_rooms",
+    "question": "How many hotel rooms does the Group manage in Sri Lanka and the Maldives?",
+    "expected_tools": [
+      "search_knowledge_base"
+    ],
+    "tools_used": [
+      "search_knowledge_base",
+      "search_knowledge_base"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "The Group manages hotel rooms in Sri Lanka and the Maldives across its portfolio (which includes Colombo Hotels, Sri Lankan Resorts, Maldivian Resorts, and City of Dreams Sri Lanka):\n\n- **3,468 rooms** under management in both Sri Lanka and the Maldives as at 31 March 2026 (page 10).\n- The Leisure industry group overview also notes a combined room inventory of **3,577 rooms** under management in both Sri Lanka and the Maldives (page 36).",
+    "model": "gemini-3.7-flash",
+    "turns": 3,
+    "stopped": "answered",
+    "seconds": 21.97,
+    "pages": [
+      10,
+      13,
+      17,
+      25,
+      36,
+      37
+    ]
+  },
+  {
+    "id": "chain_retail_vs_leisure",
+    "question": "How many times larger was Retail's recurring EBITDA than Leisure's?",
+    "expected_tools": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_used": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "Retail's recurring EBITDA was 2.54 times larger than Leisure's.\n\nRetail recurring EBITDA: 31,740 Rs. million (page 26, 57)\nLeisure recurring EBITDA: 12,486 Rs. million (page 26, 57)\n\n31,740 / 12,486 = 2.54",
+    "model": "gemini-2.5-flash",
+    "turns": 4,
+    "stopped": "answered",
+    "seconds": 23.31,
+    "pages": [
+      15,
+      26,
+      55,
+      57,
+      58
+    ]
+  }
+]

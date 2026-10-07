@@ -52,6 +52,24 @@ python3 evaluate.py             # full run, 2 to 4 API calls per question
 
 Results are written to `eval/results/`.
 
+### Results (7 October 2026)
+
+| Metric | Result |
+| --- | --- |
+| Tool selection accuracy | 12 / 12 |
+| Answer accuracy | 12 / 12 |
+| Searched when no tool was needed | 0 / 2 |
+| Turns, median | 2 |
+| Latency, median | about 21 s |
+
+How to read these numbers:
+
+- **Two runs.** Ten questions were scored in the first run. Two could not run because every model was briefly rate limited or overloaded (503); the evaluator marks those "not run" instead of scoring them as failures, and they passed when rerun minutes later with `--only`.
+- **Answers were checked by hand**, not only by the matcher. For EBITDA growth the agent computed 74.50% from the two figures and noted that the report states 75%. For hotel rooms it reported the dated figure and noted the report also gives another one.
+- **Several models answered.** gemini-3.8-flash (4), gemini-3.5-flash (3), gemini-2.5-flash (4) and gemini-3.7-flash (1), because of rate limits during the run. Every model chose the right tools.
+- **12 questions is a small set.** It catches broken behaviour; it cannot rank two close configurations.
+- **Latency** includes waiting on rate limits and model failover; a clean run is closer to 10 to 15 s per question.
+
 ## Tests
 
 ```bash

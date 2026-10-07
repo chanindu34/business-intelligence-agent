@@ -7,4 +7,4 @@ __pycache__/
 .backup*/
 
 # Local evaluation console logs
-eval_*_results.txt
+eval_*_results*.txt

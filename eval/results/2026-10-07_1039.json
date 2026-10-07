@@ -1,0 +1,237 @@
+[
+  {
+    "id": "calc_divide",
+    "question": "What is 128 divided by 4?",
+    "expected_tools": [
+      "calculate"
+    ],
+    "tools_used": [
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "128 divided by 4 is 32.\n\nCalculation: 128 / 4 = 32.",
+    "model": "gemini-3.8-flash",
+    "turns": 2,
+    "stopped": "answered",
+    "seconds": 11.06,
+    "pages": []
+  },
+  {
+    "id": "calc_percent",
+    "question": "What is 15% of 2,400?",
+    "expected_tools": [
+      "calculate"
+    ],
+    "tools_used": [
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "15% of 2,400 is 360.\n\nCalculation:\n0.15 x 2,400 = 360",
+    "model": "gemini-3.8-flash",
+    "turns": 2,
+    "stopped": "answered",
+    "seconds": 12.23,
+    "pages": []
+  },
+  {
+    "id": "calc_abuse",
+    "question": "Calculate 9**9**9",
+    "expected_tools": [
+      "calculate"
+    ],
+    "tools_used": [
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "The calculation 9**9**9 cannot be computed because the exponent is too large and exceeds the calculator's limits (which are limited to an exponent of 100 and a base of 1,000,000).",
+    "model": "gemini-3.5-flash",
+    "turns": 2,
+    "stopped": "answered",
+    "seconds": 25.73,
+    "pages": []
+  },
+  {
+    "id": "search_ebitda",
+    "question": "How much did Group EBITDA grow in 2025/26?",
+    "expected_tools": [
+      "search_knowledge_base"
+    ],
+    "tools_used": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "Group EBITDA grew by 74.50% in 2025/26.\n\nGroup EBITDA for 2025/26 was Rs.80.01 billion (page 14).\nGroup EBITDA for 2024/25 was Rs.45.85 billion (page 14).\n\nCalculation: (80.01 - 45.85) / 45.85 x 100 = 74.50%. The report states an increase of 75% (page 14).",
+    "model": "gemini-2.5-flash",
+    "turns": 3,
+    "stopped": "answered",
+    "seconds": 25.95,
+    "pages": [
+      14,
+      15,
+      56,
+      57
+    ]
+  },
+  {
+    "id": "search_risks",
+    "question": "What are the key risks facing the Group?",
+    "expected_tools": [
+      "search_knowledge_base"
+    ],
+    "tools_used": [
+      "search_knowledge_base"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "The key risks facing the Group include:\n*   Cybersecurity risks (page 141)\n*   Macroeconomic and political environment volatility (page 141)\n*   Financial exposure (page 141)\n*   Changes in regulatory environment and operational integrity concerns (page 141)\n*   Human resources related risks, including talent attrition and employee health and safety (page 141)\n*   Global competitiveness and portfolio imbalance (page 153)\n*   Macroeconomic, regulatory, and financing volatility affecting affordability, investor sentiment, and project returns (page 38)\n*   Construction cost inflation and supply chain disruptions linked to global commodity and geopolitical risks (page 38)\n*   Climate-related physical risks impacting construction timelines and asset performance (page 38)",
+    "model": "gemini-2.5-flash",
+    "turns": 2,
+    "stopped": "answered",
+    "seconds": 4.74,
+    "pages": [
+      38,
+      139,
+      141,
+      145,
+      153
+    ]
+  },
+  {
+    "id": "search_rooms",
+    "question": "How many hotel rooms does the Group manage in Sri Lanka and the Maldives?",
+    "expected_tools": [
+      "search_knowledge_base"
+    ],
+    "not_run": true,
+    "answer": "No model is available right now (gemini-3.8-flash: rate limited; gemini-3.7-flash: server error 503). Please try again later.",
+    "model": null,
+    "stopped": "no_model"
+  },
+  {
+    "id": "search_dividend",
+    "question": "What final dividend per share did the Board declare?",
+    "expected_tools": [
+      "search_knowledge_base"
+    ],
+    "tools_used": [
+      "search_knowledge_base"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "The Board declared a final dividend of Rs. 0.10 (10 cents) per share for 2025/26 (page 23, page 27).",
+    "model": "gemini-3.8-flash",
+    "turns": 2,
+    "stopped": "answered",
+    "seconds": 16.44,
+    "pages": [
+      23,
+      27,
+      56
+    ]
+  },
+  {
+    "id": "chain_retail_share",
+    "question": "What share of the Group's recurring EBITDA came from the Retail industry group?",
+    "expected_tools": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_used": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "The Retail industry group accounted for 40.67% of the Group's recurring EBITDA in 2025/26.\n\nFigures:\n- Retail recurring EBITDA: Rs. 31,740 million (page 57)\n- Group recurring EBITDA: Rs. 78,048 million (page 57)\n\nCalculation:\n31,740 / 78,048 x 100 = 40.67%",
+    "model": "gemini-3.8-flash",
+    "turns": 3,
+    "stopped": "answered",
+    "seconds": 9.2,
+    "pages": [
+      11,
+      14,
+      15,
+      57
+    ]
+  },
+  {
+    "id": "chain_ebitda_increase",
+    "question": "By how much in rupees did Group EBITDA increase from 2024/25 to 2025/26?",
+    "expected_tools": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_used": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "Group EBITDA increased by Rs. 34.16 billion from 2024/25 to 2025/26.\n\nGroup EBITDA 2025/26: Rs. 80.01 billion (page 14)\nGroup EBITDA 2024/25: Rs. 45.85 billion (page 14)\n\nCalculation: 80.01 - 45.85 = 34.16",
+    "model": "gemini-2.5-flash",
+    "turns": 4,
+    "stopped": "answered",
+    "seconds": 57.86,
+    "pages": [
+      14,
+      15,
+      56,
+      57
+    ]
+  },
+  {
+    "id": "chain_retail_vs_leisure",
+    "question": "How many times larger was Retail's recurring EBITDA than Leisure's?",
+    "expected_tools": [
+      "search_knowledge_base",
+      "calculate"
+    ],
+    "not_run": true,
+    "answer": "No model is available right now (gemini-3.5-flash: server error 503). Please try again later.",
+    "model": null,
+    "stopped": "no_model"
+  },
+  {
+    "id": "oos_capital",
+    "question": "What is the capital of France?",
+    "expected_tools": [],
+    "tools_used": [],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "I only answer questions about the John Keells Holdings (JKH) 2025/26 annual report and related calculations.",
+    "model": "gemini-3.5-flash",
+    "turns": 1,
+    "stopped": "answered",
+    "seconds": 41.56,
+    "pages": []
+  },
+  {
+    "id": "oos_cricket",
+    "question": "Who won the 2023 Cricket World Cup?",
+    "expected_tools": [],
+    "tools_used": [],
+    "tools_ok": true,
+    "answer_ok": true,
+    "problems": [],
+    "answer": "I only answer questions about the John Keells Holdings (JKH) 2025/26 annual report and related calculations.",
+    "model": "gemini-3.5-flash",
+    "turns": 1,
+    "stopped": "answered",
+    "seconds": 47.62,
+    "pages": []
+  }
+]
